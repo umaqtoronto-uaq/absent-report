@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Absence Report Form — Um Al-Qura Islamic School</title>
+<style>
+  :root{
+    --primary:#0f5c4c;
+    --primary-dark:#0a4436;
+    --bg:#f4f7f6;
+    --card:#ffffff;
+    --border:#dbe4e1;
+    --text:#1f2d2a;
+    --muted:#5b6b66;
+    --error:#c0392b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding:24px 12px 60px;
+  }
+  .wrap{max-width:640px;margin:0 auto;}
+  header{
+    text-align:center;
+    margin-bottom:20px;
+  }
+  header img{max-height:64px;margin-bottom:8px;}
+  header h1{font-size:1.4rem;margin:6px 0 2px;color:var(--primary-dark);}
+  header p{margin:0;color:var(--muted);font-size:0.92rem;}
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:22px 20px;
+    margin-bottom:18px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card h2{
+    font-size:1.02rem;
+    margin:0 0 14px;
+    color:var(--primary-dark);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  label{
+    display:block;
+    font-size:0.88rem;
+    font-weight:600;
+    margin-bottom:6px;
+    color:var(--text);
+  }
+  .field{margin-bottom:16px;}
+  .field:last-child{margin-bottom:0;}
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  select,
+  textarea{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid var(--border);
+    border-radius:9px;
+    font-size:0.95rem;
+    background:#fff;
+    color:var(--text);
+    font-family:inherit;
+  }
+  textarea{resize:vertical;min-height:70px;}
+  input:focus,select:focus,textarea:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(15,92,76,0.12);
+  }
+  .row{display:flex;gap:10px;}
+  .row > *{flex:1;}
+  .child-card{
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:12px;
+    position:relative;
+    background:#fbfdfc;
+  }
+  .child-card .child-title{
+    font-size:0.8rem;
+    font-weight:700;
+    color:var(--primary);
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    margin-bottom:10px;
+  }
+  .remove-child{
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:none;
+    border:none;
+    color:var(--error);
+    font-size:0.8rem;
+    cursor:pointer;
+    font-weight:600;
+    padding:2px 6px;
+  }
+  .add-child-btn{
+    width:100%;
+    padding:10px;
+    border:1.5px dashed var(--primary);
+    border-radius:9px;
+    background:#fff;
+    color:var(--primary);
+    font-weight:600;
+    font-size:0.9rem;
+    cursor:pointer;
+  }
+  .add-child-btn:hover{background:#eef6f3;}
+  #otherReasonWrap{display:none;margin-top:10px;}
+  .sig-box{
+    border:1px solid var(--border);
+    border-radius:9px;
+    background:#fff;
+    touch-action:none;
+  }
+  canvas#sigPad{
+    width:100%;
+    height:150px;
+    display:block;
+    cursor:crosshair;
+    border-radius:9px;
+  }
+  .sig-actions{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:8px;
+  }
+  .sig-actions button{
+    background:none;
+    border:none;
+    color:var(--muted);
+    font-size:0.82rem;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  .attest{
+    font-size:0.82rem;
+    color:var(--muted);
+    margin-top:6px;
+    line-height:1.4;
+  }
+  .submit-btn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:var(--primary);
+    color:#fff;
+    font-size:1.02rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  .submit-btn:hover{background:var(--primary-dark);}
+  .submit-btn:disabled{background:#9db8b1;cursor:not-allowed;}
+  .hint{font-size:0.78rem;color:var(--muted);margin-top:5px;}
+  .error-text{color:var(--error);font-size:0.8rem;margin-top:5px;display:none;}
+  #statusScreen{
+    display:none;
+    text-align:center;
+    padding:50px 20px;
+  }
+  #statusScreen .icon{font-size:3rem;margin-bottom:10px;}
+  #statusScreen h2{margin:0 0 8px;color:var(--primary-dark);}
+  #statusScreen p{color:var(--muted);margin:0 0 20px;}
+  #statusScreen.error .icon{color:var(--error);}
+  #formScreen.hidden, #statusScreen.hidden{display:none;}
+  .again-btn{
+    background:none;
+    border:1.5px solid var(--primary);
+    color:var(--primary);
+    padding:10px 18px;
+    border-radius:8px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .required-star{color:var(--error);}
+  iframe#hiddenTargetFrame{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Student Absence Report Form</h1>
+    <p>Um Al-Qura Islamic School — 265 Yorkland Blvd, North York, ON</p>
+  </header>
+
+  <div id="formScreen">
+    <form id="absenceForm" autocomplete="off">
+
+      <div class="card">
+        <h2>Report Details</h2>
+        <div class="row">
+          <div class="field">
+            <label>Date of Report <span class="required-star">*</span></label>
+            <input type="date" id="reportDate" required>
+          </div>
+        </div>
+        <div class="field">
+          <label>Parent / Guardian Full Name <span class="required-star">*</span></label>
+          <input type="text" id="parentName" placeholder="e.g. Fatima Ahmed" required>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Parent Email <span class="required-star">*</span></label>
+            <input type="email" id="parentEmail" placeholder="you@example.com" required>
+            <div class="hint">A confirmation will be sent here once submitted.</div>
+          </div>
+          <div class="field">
+            <label>Parent Phone</label>
+            <input type="tel" id="parentPhone" placeholder="(optional)">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Student(s) Absent</h2>
+        <div id="childrenContainer"></div>
+        <button type="button" class="add-child-btn" id="addChildBtn">+ Add another child</button>
+      </div>
+
+      <div class="card">
+        <h2>Reason for Absence <span class="required-star">*</span></h2>
+        <div class="field">
+          <select id="reasonSelect" required>
+            <option value="" disabled selected>Select a reason…</option>
+            <option value="Sick / Illness">Sick / Illness</option>
+            <option value="Medical / Dental Appointment">Medical / Dental Appointment</option>
+            <option value="Family Emergency">Family Emergency</option>
+            <option value="Religious / Cultural Observance">Religious / Cultural Observance</option>
+            <option value="Travel">Travel</option>
+            <option value="Bereavement">Bereavement</option>
+            <option value="Other">Other (please specify)</option>
+          </select>
+          <div id="otherReasonWrap">
+            <textarea id="otherReasonText" placeholder="Please describe the reason..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Parent / Guardian Signature <span class="required-star">*</span></h2>
+        <div class="sig-box">
+          <canvas id="sigPad"></canvas>
+        </div>
+        <div class="sig-actions">
+          <span class="hint">Sign using your mouse or finger</span>
+          <button type="button" id="clearSigBtn">Clear signature</button>
+        </div>
+        <div class="error-text" id="sigError">Please provide a signature before submitting.</div>
+        <p class="attest">By signing above, I confirm that the information provided in this form is accurate and that I am the parent/guardian of the student(s) listed.</p>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Submit Absence Report</button>
+    </form>
+  </div>
+
+  <div id="statusScreen">
+    <div class="icon" id="statusIcon">✅</div>
+    <h2 id="statusTitle">Form Submitted</h2>
+    <p id="statusMsg">Thank you. A confirmation email has been sent to the parent email provided.</p>
+    <button class="again-btn" id="submitAnotherBtn">Submit another report</button>
+  </div>
+</div>
+
+<iframe id="hiddenTargetFrame" name="hiddenTargetFrame"></iframe>
+
+<script>
+// ============================================================
+// CONFIGURE THIS: paste your deployed Apps Script Web App URL
+// (ends in /exec). See Code.gs deployment instructions.
+// ============================================================
+const SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+let childCount = 0;
+const childrenContainer = document.getElementById('childrenContainer');
+
+function addChildRow(){
+  childCount++;
+  const idx = childCount;
+  const div = document.createElement('div');
+  div.className = 'child-card';
+  div.dataset.idx = idx;
+  div.innerHTML = `
+    <div class="child-title">Child ${idx}</div>
+    ${idx > 1 ? '<button type="button" class="remove-child" data-remove="'+idx+'">Remove</button>' : ''}
+    <div class="row">
+      <div class="field">
+        <label>Student Full Name <span class="required-star">*</span></label>
+        <input type="text" class="childName" required placeholder="Student name">
+      </div>
+      <div class="field">
+        <label>Grade <span class="required-star">*</span></label>
+        <input type="text" class="childGrade" required placeholder="e.g. Grade 9">
+      </div>
+    </div>
+  `;
+  childrenContainer.appendChild(div);
+  updateChildLabels();
+}
+
+function updateChildLabels(){
+  const cards = childrenContainer.querySelectorAll('.child-card');
+  cards.forEach((card, i) => {
+    card.querySelector('.child-title').textContent = 'Child ' + (i + 1);
+  });
+}
+
+childrenContainer.addEventListener('click', function(e){
+  if(e.target.matches('[data-remove]')){
+    e.target.closest('.child-card').remove();
+    updateChildLabels();
+  }
+});
+
+document.getElementById('addChildBtn').addEventListener('click', addChildRow);
+addChildRow(); // start with one child
+
+// Reason "Other" toggle
+const reasonSelect = document.getElementById('reasonSelect');
+const otherWrap = document.getElementById('otherReasonWrap');
+reasonSelect.addEventListener('change', function(){
+  otherWrap.style.display = this.value === 'Other' ? 'block' : 'none';
+});
+
+// Default date = today
+document.getElementById('reportDate').valueAsDate = new Date();
+
+// ---------- Signature pad ----------
+const canvas = document.getElementById('sigPad');
+const ctx = canvas.getContext('2d');
+let drawing = false, hasSignature = false;
+
+function resizeCanvas(){
+  const ratio = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * ratio;
+  canvas.height = 150 * ratio;
+  ctx.scale(ratio, ratio);
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#1f2d2a';
+}
+resizeCanvas();
+window.addEventListener('resize', () => {
+  const data = hasSignature ? canvas.toDataURL() : null;
+  resizeCanvas();
+  if (data){
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    img.src = data;
+  }
+});
+
+function getPos(e){
+  const rect = canvas.getBoundingClientRect();
+  if (e.touches && e.touches.length){
+    return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+  }
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+}
+function startDraw(e){
+  drawing = true; hasSignature = true;
+  const p = getPos(e);
+  ctx.beginPath();
+  ctx.moveTo(p.x, p.y);
+  e.preventDefault();
+}
+function moveDraw(e){
+  if(!drawing) return;
+  const p = getPos(e);
+  ctx.lineTo(p.x, p.y);
+  ctx.stroke();
+  e.preventDefault();
+}
+function endDraw(){ drawing = false; }
+
+canvas.addEventListener('mousedown', startDraw);
+canvas.addEventListener('mousemove', moveDraw);
+window.addEventListener('mouseup', endDraw);
+canvas.addEventListener('touchstart', startDraw, {passive:false});
+canvas.addEventListener('touchmove', moveDraw, {passive:false});
+canvas.addEventListener('touchend', endDraw);
+
+document.getElementById('clearSigBtn').addEventListener('click', function(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  hasSignature = false;
+});
+
+// ---------- Submit ----------
+const form = document.getElementById('absenceForm');
+const submitBtn = document.getElementById('submitBtn');
+const formScreen = document.getElementById('formScreen');
+const statusScreen = document.getElementById('statusScreen');
+const hiddenFrame = document.getElementById('hiddenTargetFrame');
+
+form.addEventListener('submit', function(e){
+  e.preventDefault();
+  document.getElementById('sigError').style.display = 'none';
+
+  if (!hasSignature){
+    document.getElementById('sigError').style.display = 'block';
+    return;
+  }
+  if (SCRIPT_URL.indexOf('PASTE_YOUR') === 0){
+    alert('Form is not yet connected to the backend. See setup instructions in Code.gs.');
+    return;
+  }
+
+  const children = [];
+  childrenContainer.querySelectorAll('.child-card').forEach(card => {
+    children.push({
+      name: card.querySelector('.childName').value.trim(),
+      grade: card.querySelector('.childGrade').value.trim()
+    });
+  });
+
+  const reason = reasonSelect.value === 'Other'
+    ? (document.getElementById('otherReasonText').value.trim() || 'Other')
+    : reasonSelect.value;
+
+  const payload = {
+    reportDate: document.getElementById('reportDate').value,
+    parentName: document.getElementById('parentName').value.trim(),
+    parentEmail: document.getElementById('parentEmail').value.trim(),
+    parentPhone: document.getElementById('parentPhone').value.trim(),
+    children: children,
+    reason: reason,
+    signature: canvas.toDataURL('image/png'),
+    submittedAt: new Date().toISOString()
+  };
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting…';
+
+  // Build a hidden real <form> POST targeting a hidden iframe.
+  // This avoids CORS entirely (Apps Script Web Apps don't reliably
+  // send CORS headers back to fetch() from an external site).
+  const tempForm = document.createElement('form');
+  tempForm.method = 'POST';
+  tempForm.action = SCRIPT_URL;
+  tempForm.target = 'hiddenTargetFrame';
+  tempForm.style.display = 'none';
+
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify(payload);
+  tempForm.appendChild(input);
+
+  document.body.appendChild(tempForm);
+
+  let handled = false;
+  function finish(success){
+    if (handled) return;
+    handled = true;
+    tempForm.remove();
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit Absence Report';
+    showStatus(success);
+  }
+
+  hiddenFrame.onload = function(){ finish(true); };
+  // Fallback in case onload doesn't fire as expected
+  setTimeout(() => finish(true), 6000);
+
+  tempForm.submit();
+});
+
+function showStatus(success){
+  formScreen.classList.add('hidden');
+  statusScreen.style.display = 'block';
+  if (success){
+    document.getElementById('statusIcon').textContent = '✅';
+    document.getElementById('statusTitle').textContent = 'Form Submitted';
+    document.getElementById('statusMsg').textContent =
+      'Thank you. Your absence report has been recorded and a confirmation email has been sent to you.';
+    statusScreen.classList.remove('error');
+  } else {
+    document.getElementById('statusIcon').textContent = '⚠️';
+    document.getElementById('statusTitle').textContent = 'Submission Issue';
+    document.getElementById('statusMsg').textContent =
+      'Something went wrong sending your report. Please try again or contact the school office.';
+    statusScreen.classList.add('error');
+  }
+}
+
+document.getElementById('submitAnotherBtn').addEventListener('click', function(){
+  form.reset();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  hasSignature = false;
+  childrenContainer.innerHTML = '';
+  childCount = 0;
+  addChildRow();
+  document.getElementById('reportDate').valueAsDate = new Date();
+  otherWrap.style.display = 'none';
+  statusScreen.style.display = 'none';
+  formScreen.classList.remove('hidden');
+});
+</script>
+</body>
+</html>
