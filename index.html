@@ -140,7 +140,6 @@
   }
   .again-btn.solid{background:var(--primary);color:#fff;}
   .required-star{color:var(--error);}
-  iframe#hiddenTargetFrame{display:none;}
 </style>
 </head>
 <body>
@@ -251,7 +250,6 @@
   </div>
 </div>
 
-<iframe id="hiddenTargetFrame" name="hiddenTargetFrame"></iframe>
 
 <script>
 // ============================================================
@@ -396,19 +394,11 @@ function signatureDataUrl(){
   return out.toDataURL('image/png');
 }
 
-// ---------- Listen for the server's reply ----------
-let pendingReply = null;
-window.addEventListener('message', function(ev){
-  const d = ev.data;
-  if (d && d.source === 'uaqs-absence' && pendingReply) pendingReply(d);
-});
-
 // ---------- Submit ----------
 const form = document.getElementById('absenceForm');
 const submitBtn = document.getElementById('submitBtn');
 const formScreen = document.getElementById('formScreen');
 const statusScreen = document.getElementById('statusScreen');
-const hiddenFrame = document.getElementById('hiddenTargetFrame');
 const formError = document.getElementById('formError');
 let lastPayload = null;
 
@@ -470,44 +460,42 @@ form.addEventListener('submit', function(e){
   submitBtn.disabled = true;
   submitBtn.textContent = 'Submitting… please wait';
 
-  // Hidden real <form> POST into a hidden iframe (avoids CORS problems
-  // with Apps Script). The server replies via postMessage.
-  const tempForm = document.createElement('form');
-  tempForm.method = 'POST';
-  tempForm.action = SCRIPT_URL;
-  tempForm.target = 'hiddenTargetFrame';
-  tempForm.acceptCharset = 'UTF-8';
-  tempForm.style.display = 'none';
-  const input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'payload';
-  input.value = JSON.stringify(payload);
-  tempForm.appendChild(input);
-  document.body.appendChild(tempForm);
+  // Send to Apps Script. text/plain avoids a CORS pre-check, and Apps Script
+  // replies with JSON that we can read directly.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 45000);
 
-  let handled = false, loadTimer = null;
-  const hardTimer = setTimeout(() => finish({status:'timeout'}), 30000);
-
-  function finish(res){
-    if (handled) return;
-    handled = true;
-    clearTimeout(hardTimer); clearTimeout(loadTimer);
-    pendingReply = null;
-    hiddenFrame.onload = null;
-    tempForm.remove();
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Submit Absence Report';
-    showStatus(res);
-  }
-
-  pendingReply = finish;
-  // If the page loaded but the backend never confirmed, do NOT claim success.
-  hiddenFrame.onload = function(){
-    loadTimer = setTimeout(() => finish({status:'unconfirmed'}), 8000);
-  };
-
-  tempForm.submit();
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload),
+    redirect: 'follow',
+    signal: controller.signal
+  })
+  .then(r => r.text())
+  .then(text => {
+    let res;
+    try { res = JSON.parse(text); }
+    catch (e) {
+      res = { status: 'error', message: 'The school system sent an unexpected reply (the backend may need permissions approved or redeploying).' };
+      console.error('Backend reply:', text);
+    }
+    finishSubmit(res);
+  })
+  .catch(err => {
+    console.error(err);
+    finishSubmit(err.name === 'AbortError'
+      ? { status: 'timeout' }
+      : { status: 'error', message: 'Could not reach the school system (' + err.message + ').' });
+  })
+  .finally(() => clearTimeout(timer));
 });
+
+function finishSubmit(res){
+  submitBtn.disabled = false;
+  submitBtn.textContent = 'Submit Absence Report';
+  showStatus(res);
+}
 
 function showStatus(res){
   const title = document.getElementById('statusTitle');
@@ -555,10 +543,7 @@ function showStatus(res){
     summary.style.display = 'none';
     backBtn.style.display = '';
     document.getElementById('submitAnotherBtn').style.display = 'none';
-    if (res.status === 'unconfirmed'){
-      title.textContent = 'Submission Not Confirmed';
-      msg.textContent = 'The school system did not confirm your report. Please go back and try again in a moment. If this keeps happening, contact the school office directly.';
-    } else if (res.status === 'timeout'){
+    if (res.status === 'timeout'){
       title.textContent = 'We Couldn\u2019t Confirm Your Submission';
       msg.textContent = 'The connection took too long. Please check your email for a confirmation. If none arrives within a few minutes, go back and try again, or contact the school office.';
     } else {
