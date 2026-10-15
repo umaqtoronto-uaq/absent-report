@@ -255,7 +255,7 @@
 // ============================================================
 // CONFIGURE THIS: your deployed Apps Script Web App URL (ends in /exec)
 // ============================================================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyI8kzUhaY3FFNH7wdoAepvmUHgj1V7hgZffWCfcd-2TL1zzEd7b_z05RY-e8uXLY0a/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqWQqGodShfLZXRJzOvvoKEHOMTDhU7QIMlStOXXzzHC4m6XF4kfRjvFtKhwcU12OW/exec";
 
 // Local (Toronto) date as yyyy-mm-dd — avoids the UTC "tomorrow" bug in the evening
 function todayLocal(){
@@ -460,36 +460,44 @@ form.addEventListener('submit', function(e){
   submitBtn.disabled = true;
   submitBtn.textContent = 'Submitting… please wait';
 
-  // Send to Apps Script. text/plain avoids a CORS pre-check, and Apps Script
-  // replies with JSON that we can read directly.
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 45000);
+  // 1) Send the report. 'no-cors' means the browser never blocks the send.
+  // 2) Then ask the backend (JSONP) whether it was saved, and show the real result.
+  const id = 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  payload.id = id;
 
   fetch(SCRIPT_URL, {
     method: 'POST',
+    mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(payload),
-    redirect: 'follow',
-    signal: controller.signal
-  })
-  .then(r => r.text())
-  .then(text => {
-    let res;
-    try { res = JSON.parse(text); }
-    catch (e) {
-      res = { status: 'error', message: 'The school system sent an unexpected reply (the backend may need permissions approved or redeploying).' };
-      console.error('Backend reply:', text);
-    }
-    finishSubmit(res);
-  })
-  .catch(err => {
-    console.error(err);
-    finishSubmit(err.name === 'AbortError'
-      ? { status: 'timeout' }
-      : { status: 'error', message: 'Could not reach the school system (' + err.message + ').' });
-  })
-  .finally(() => clearTimeout(timer));
+    body: JSON.stringify(payload)
+  }).catch(err => console.warn('Send warning:', err));
+
+  pollStatus(id, Date.now());
 });
+
+// Ask the backend for this report's result, every 2.5 seconds for up to ~60 seconds.
+function pollStatus(id, startedAt){
+  const cbName = 'absCb_' + Math.random().toString(36).slice(2);
+  const script = document.createElement('script');
+  let done = false;
+  const cleanup = () => { delete window[cbName]; script.remove(); };
+  const again = () => {
+    if (Date.now() - startedAt > 60000) {
+      finishSubmit({ status: 'timeout' });
+    } else {
+      setTimeout(() => pollStatus(id, startedAt), 2500);
+    }
+  };
+  window[cbName] = function(res){
+    done = true; cleanup();
+    if (res && res.status === 'pending') again();
+    else finishSubmit(res || { status: 'error' });
+  };
+  script.onerror = function(){ if (!done){ cleanup(); again(); } };
+  script.src = SCRIPT_URL + '?action=status&id=' + encodeURIComponent(id) +
+               '&callback=' + cbName + '&t=' + Date.now();
+  document.body.appendChild(script);
+}
 
 function finishSubmit(res){
   submitBtn.disabled = false;
