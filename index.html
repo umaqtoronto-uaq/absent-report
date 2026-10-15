@@ -14,6 +14,7 @@
     --text:#1f2d2a;
     --muted:#5b6b66;
     --error:#c0392b;
+    --success-bg:#e8f5f0;
   }
   *{box-sizing:border-box;}
   body{
@@ -24,10 +25,7 @@
     padding:24px 12px 60px;
   }
   .wrap{max-width:640px;margin:0 auto;}
-  header{
-    text-align:center;
-    margin-bottom:20px;
-  }
+  header{text-align:center;margin-bottom:20px;}
   header img{max-height:64px;margin-bottom:8px;}
   header h1{font-size:1.4rem;margin:6px 0 2px;color:var(--primary-dark);}
   header p{margin:0;color:var(--muted);font-size:0.92rem;}
@@ -43,25 +41,12 @@
     font-size:1.02rem;
     margin:0 0 14px;
     color:var(--primary-dark);
-    display:flex;
-    align-items:center;
-    gap:8px;
+    display:flex;align-items:center;gap:8px;
   }
-  label{
-    display:block;
-    font-size:0.88rem;
-    font-weight:600;
-    margin-bottom:6px;
-    color:var(--text);
-  }
+  label{display:block;font-size:0.88rem;font-weight:600;margin-bottom:6px;color:var(--text);}
   .field{margin-bottom:16px;}
   .field:last-child{margin-bottom:0;}
-  input[type="text"],
-  input[type="email"],
-  input[type="tel"],
-  input[type="date"],
-  select,
-  textarea{
+  input[type="text"],input[type="email"],input[type="tel"],input[type="date"],select,textarea{
     width:100%;
     padding:11px 12px;
     border:1px solid var(--border);
@@ -78,7 +63,8 @@
     box-shadow:0 0 0 3px rgba(15,92,76,0.12);
   }
   .row{display:flex;gap:10px;}
-  .row > *{flex:1;}
+  .row > *{flex:1;min-width:0;}
+  @media (max-width:480px){ .row{flex-direction:column;gap:0;} }
   .child-card{
     border:1px solid var(--border);
     border-radius:10px;
@@ -88,106 +74,71 @@
     background:#fbfdfc;
   }
   .child-card .child-title{
-    font-size:0.8rem;
-    font-weight:700;
-    color:var(--primary);
-    text-transform:uppercase;
-    letter-spacing:0.03em;
-    margin-bottom:10px;
+    font-size:0.8rem;font-weight:700;color:var(--primary);
+    text-transform:uppercase;letter-spacing:0.03em;margin-bottom:10px;
   }
   .remove-child{
-    position:absolute;
-    top:10px;
-    right:10px;
-    background:none;
-    border:none;
-    color:var(--error);
-    font-size:0.8rem;
-    cursor:pointer;
-    font-weight:600;
-    padding:2px 6px;
+    position:absolute;top:10px;right:10px;
+    background:none;border:none;color:var(--error);
+    font-size:0.8rem;cursor:pointer;font-weight:600;padding:2px 6px;
   }
   .add-child-btn{
-    width:100%;
-    padding:10px;
-    border:1.5px dashed var(--primary);
-    border-radius:9px;
-    background:#fff;
-    color:var(--primary);
-    font-weight:600;
-    font-size:0.9rem;
-    cursor:pointer;
+    width:100%;padding:10px;
+    border:1.5px dashed var(--primary);border-radius:9px;
+    background:#fff;color:var(--primary);
+    font-weight:600;font-size:0.9rem;cursor:pointer;
   }
   .add-child-btn:hover{background:#eef6f3;}
   #otherReasonWrap{display:none;margin-top:10px;}
-  .sig-box{
-    border:1px solid var(--border);
-    border-radius:9px;
-    background:#fff;
-    touch-action:none;
-  }
-  canvas#sigPad{
-    width:100%;
-    height:150px;
-    display:block;
-    cursor:crosshair;
-    border-radius:9px;
-  }
-  .sig-actions{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:8px;
-  }
+  .sig-box{border:1px solid var(--border);border-radius:9px;background:#fff;touch-action:none;}
+  canvas#sigPad{width:100%;height:150px;display:block;cursor:crosshair;border-radius:9px;}
+  .sig-actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
   .sig-actions button{
-    background:none;
-    border:none;
-    color:var(--muted);
-    font-size:0.82rem;
-    cursor:pointer;
-    text-decoration:underline;
+    background:none;border:none;color:var(--muted);
+    font-size:0.82rem;cursor:pointer;text-decoration:underline;
   }
-  .attest{
-    font-size:0.82rem;
-    color:var(--muted);
-    margin-top:6px;
-    line-height:1.4;
-  }
+  .attest{font-size:0.82rem;color:var(--muted);margin-top:6px;line-height:1.4;}
   .submit-btn{
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:10px;
-    background:var(--primary);
-    color:#fff;
-    font-size:1.02rem;
-    font-weight:700;
-    cursor:pointer;
-    transition:background .15s;
+    width:100%;padding:15px;border:none;border-radius:10px;
+    background:var(--primary);color:#fff;
+    font-size:1.02rem;font-weight:700;cursor:pointer;transition:background .15s;
   }
   .submit-btn:hover{background:var(--primary-dark);}
   .submit-btn:disabled{background:#9db8b1;cursor:not-allowed;}
   .hint{font-size:0.78rem;color:var(--muted);margin-top:5px;}
   .error-text{color:var(--error);font-size:0.8rem;margin-top:5px;display:none;}
-  #statusScreen{
-    display:none;
-    text-align:center;
-    padding:50px 20px;
+
+  /* Status screen */
+  #statusScreen{display:none;}
+  #statusScreen .card{text-align:center;padding:40px 22px;}
+  #statusScreen .icon{
+    width:72px;height:72px;border-radius:50%;
+    margin:0 auto 14px;display:flex;align-items:center;justify-content:center;
+    font-size:2.2rem;background:var(--success-bg);color:var(--primary);
   }
-  #statusScreen .icon{font-size:3rem;margin-bottom:10px;}
-  #statusScreen h2{margin:0 0 8px;color:var(--primary-dark);}
-  #statusScreen p{color:var(--muted);margin:0 0 20px;}
-  #statusScreen.error .icon{color:var(--error);}
-  #formScreen.hidden, #statusScreen.hidden{display:none;}
+  #statusScreen.error .icon{background:#fbecea;color:var(--error);}
+  #statusScreen h2{margin:0 0 10px;color:var(--primary-dark);font-size:1.35rem;}
+  #statusScreen.error h2{color:var(--error);}
+  #statusScreen p{color:var(--muted);margin:0 0 12px;line-height:1.5;}
+  .ref-box{
+    display:inline-block;margin:6px 0 20px;padding:8px 14px;
+    border:1px dashed var(--primary);border-radius:8px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.95rem;color:var(--primary-dark);
+  }
+  .summary{
+    text-align:left;margin:0 auto 22px;max-width:420px;
+    border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:#fbfdfc;
+    font-size:0.9rem;
+  }
+  .summary div{padding:3px 0;}
+  .summary b{color:var(--text);}
+  #formScreen.hidden{display:none;}
+  .status-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
   .again-btn{
-    background:none;
-    border:1.5px solid var(--primary);
-    color:var(--primary);
-    padding:10px 18px;
-    border-radius:8px;
-    font-weight:600;
-    cursor:pointer;
+    background:none;border:1.5px solid var(--primary);color:var(--primary);
+    padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.92rem;
   }
+  .again-btn.solid{background:var(--primary);color:#fff;}
   .required-star{color:var(--error);}
   iframe#hiddenTargetFrame{display:none;}
 </style>
@@ -200,28 +151,26 @@
   </header>
 
   <div id="formScreen">
-    <form id="absenceForm" autocomplete="off">
+    <form id="absenceForm" autocomplete="off" novalidate>
 
       <div class="card">
         <h2>Report Details</h2>
-        <div class="row">
-          <div class="field">
-            <label>Date of Report <span class="required-star">*</span></label>
-            <input type="date" id="reportDate" required>
-          </div>
+        <div class="field">
+          <label for="reportDate">Date of Report <span class="required-star">*</span></label>
+          <input type="date" id="reportDate" required>
         </div>
         <div class="field">
-          <label>Parent / Guardian Full Name <span class="required-star">*</span></label>
+          <label for="parentName">Parent / Guardian Full Name <span class="required-star">*</span></label>
           <input type="text" id="parentName" placeholder="e.g. Farooq Farshad" required>
         </div>
         <div class="row">
           <div class="field">
-            <label>Parent Email <span class="required-star">*</span></label>
+            <label for="parentEmail">Parent Email <span class="required-star">*</span></label>
             <input type="email" id="parentEmail" placeholder="you@example.com" required>
             <div class="hint">A confirmation will be sent here once submitted.</div>
           </div>
           <div class="field">
-            <label>Parent Phone</label>
+            <label for="parentPhone">Parent Phone</label>
             <input type="tel" id="parentPhone" placeholder="(optional)">
           </div>
         </div>
@@ -231,6 +180,22 @@
         <h2>Student(s) Absent</h2>
         <div id="childrenContainer"></div>
         <button type="button" class="add-child-btn" id="addChildBtn">+ Add another child</button>
+      </div>
+
+      <div class="card">
+        <h2>Date(s) of Absence</h2>
+        <div class="row">
+          <div class="field">
+            <label for="absenceFrom">Absent on / From <span class="required-star">*</span></label>
+            <input type="date" id="absenceFrom" required>
+          </div>
+          <div class="field">
+            <label for="absenceTo">To (if more than one day)</label>
+            <input type="date" id="absenceTo">
+          </div>
+        </div>
+        <div class="hint">Leave "To" empty if the absence is for one day only.</div>
+        <div class="error-text" id="dateError">The "To" date can't be before the "From" date.</div>
       </div>
 
       <div class="card">
@@ -265,15 +230,23 @@
         <p class="attest">By signing above, I confirm that the information provided in this form is accurate and that I am the parent/guardian of the student(s) listed.</p>
       </div>
 
+      <div class="error-text" id="formError" style="text-align:center;margin-bottom:12px;font-size:0.9rem;"></div>
       <button type="submit" class="submit-btn" id="submitBtn">Submit Absence Report</button>
     </form>
   </div>
 
   <div id="statusScreen">
-    <div class="icon" id="statusIcon">✅</div>
-    <h2 id="statusTitle">Form Submitted</h2>
-    <p id="statusMsg">Thank you. A confirmation email has been sent to the parent email provided.</p>
-    <button class="again-btn" id="submitAnotherBtn">Submit another report</button>
+    <div class="card">
+      <div class="icon" id="statusIcon">✓</div>
+      <h2 id="statusTitle">Form Successfully Submitted</h2>
+      <p id="statusMsg"></p>
+      <div id="refWrap" class="ref-box"></div>
+      <div id="summary" class="summary"></div>
+      <div class="status-actions">
+        <button class="again-btn" id="backBtn" style="display:none;">Back to form</button>
+        <button class="again-btn solid" id="submitAnotherBtn">Submit another report</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -281,11 +254,22 @@
 
 <script>
 // ============================================================
-// CONFIGURE THIS: paste your deployed Apps Script Web App URL
-// (ends in /exec). See Code.gs deployment instructions.
+// CONFIGURE THIS: your deployed Apps Script Web App URL (ends in /exec)
 // ============================================================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUQ6cfZKnyVTzlx1TuntleK5wxQeOev9TOCzF07X9WwnzwhDNXCgjFmcc_5ky2mfJIXg/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzq-4jG1E4okzdBrIPyvnfhcJd17auVAlaGuruIvBhO8vGJZ3sA8zEs5ziL4iIIJ-KnTQ/exec";
 
+// Local (Toronto) date as yyyy-mm-dd — avoids the UTC "tomorrow" bug in the evening
+function todayLocal(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function prettyDate(s){
+  if(!s) return '';
+  const p = s.split('-');
+  return new Date(+p[0], +p[1]-1, +p[2]).toLocaleDateString('en-CA',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+}
+
+// ---------- Children ----------
 let childCount = 0;
 const childrenContainer = document.getElementById('childrenContainer');
 
@@ -294,10 +278,9 @@ function addChildRow(){
   const idx = childCount;
   const div = document.createElement('div');
   div.className = 'child-card';
-  div.dataset.idx = idx;
   div.innerHTML = `
     <div class="child-title">Child ${idx}</div>
-    ${idx > 1 ? '<button type="button" class="remove-child" data-remove="'+idx+'">Remove</button>' : ''}
+    ${idx > 1 ? '<button type="button" class="remove-child" data-remove="1">Remove</button>' : ''}
     <div class="row">
       <div class="field">
         <label>Student Full Name <span class="required-star">*</span></label>
@@ -312,33 +295,34 @@ function addChildRow(){
   childrenContainer.appendChild(div);
   updateChildLabels();
 }
-
 function updateChildLabels(){
-  const cards = childrenContainer.querySelectorAll('.child-card');
-  cards.forEach((card, i) => {
+  childrenContainer.querySelectorAll('.child-card').forEach((card, i) => {
     card.querySelector('.child-title').textContent = 'Child ' + (i + 1);
   });
 }
-
 childrenContainer.addEventListener('click', function(e){
   if(e.target.matches('[data-remove]')){
     e.target.closest('.child-card').remove();
     updateChildLabels();
   }
 });
-
 document.getElementById('addChildBtn').addEventListener('click', addChildRow);
-addChildRow(); // start with one child
+addChildRow();
 
-// Reason "Other" toggle
+// ---------- Reason "Other" ----------
 const reasonSelect = document.getElementById('reasonSelect');
 const otherWrap = document.getElementById('otherReasonWrap');
 reasonSelect.addEventListener('change', function(){
   otherWrap.style.display = this.value === 'Other' ? 'block' : 'none';
 });
 
-// Default date = today
-document.getElementById('reportDate').valueAsDate = new Date();
+// ---------- Default dates ----------
+function setDefaultDates(){
+  document.getElementById('reportDate').value = todayLocal();
+  document.getElementById('absenceFrom').value = todayLocal();
+  document.getElementById('absenceTo').value = '';
+}
+setDefaultDates();
 
 // ---------- Signature pad ----------
 const canvas = document.getElementById('sigPad');
@@ -350,7 +334,7 @@ function resizeCanvas(){
   const rect = canvas.getBoundingClientRect();
   canvas.width = rect.width * ratio;
   canvas.height = 150 * ratio;
-  ctx.scale(ratio, ratio);
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   ctx.lineWidth = 2;
   ctx.lineCap = 'round';
   ctx.strokeStyle = '#1f2d2a';
@@ -358,14 +342,14 @@ function resizeCanvas(){
 resizeCanvas();
 window.addEventListener('resize', () => {
   const data = hasSignature ? canvas.toDataURL() : null;
+  const w = canvas.getBoundingClientRect().width;
   resizeCanvas();
   if (data){
     const img = new Image();
-    img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    img.onload = () => ctx.drawImage(img, 0, 0, w, 150);
     img.src = data;
   }
 });
-
 function getPos(e){
   const rect = canvas.getBoundingClientRect();
   if (e.touches && e.touches.length){
@@ -375,30 +359,47 @@ function getPos(e){
 }
 function startDraw(e){
   drawing = true; hasSignature = true;
+  document.getElementById('sigError').style.display = 'none';
   const p = getPos(e);
-  ctx.beginPath();
-  ctx.moveTo(p.x, p.y);
+  ctx.beginPath(); ctx.moveTo(p.x, p.y);
   e.preventDefault();
 }
 function moveDraw(e){
   if(!drawing) return;
   const p = getPos(e);
-  ctx.lineTo(p.x, p.y);
-  ctx.stroke();
+  ctx.lineTo(p.x, p.y); ctx.stroke();
   e.preventDefault();
 }
 function endDraw(){ drawing = false; }
-
 canvas.addEventListener('mousedown', startDraw);
 canvas.addEventListener('mousemove', moveDraw);
 window.addEventListener('mouseup', endDraw);
 canvas.addEventListener('touchstart', startDraw, {passive:false});
 canvas.addEventListener('touchmove', moveDraw, {passive:false});
 canvas.addEventListener('touchend', endDraw);
-
-document.getElementById('clearSigBtn').addEventListener('click', function(){
+function clearSignature(){
+  ctx.save(); ctx.setTransform(1,0,0,1,0,0);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.restore();
   hasSignature = false;
+}
+document.getElementById('clearSigBtn').addEventListener('click', clearSignature);
+
+// Signature exported with a white background (looks right in email)
+function signatureDataUrl(){
+  const out = document.createElement('canvas');
+  out.width = canvas.width; out.height = canvas.height;
+  const o = out.getContext('2d');
+  o.fillStyle = '#fff'; o.fillRect(0, 0, out.width, out.height);
+  o.drawImage(canvas, 0, 0);
+  return out.toDataURL('image/png');
+}
+
+// ---------- Listen for the server's reply ----------
+let pendingReply = null;
+window.addEventListener('message', function(ev){
+  const d = ev.data;
+  if (d && d.source === 'uaqs-absence' && pendingReply) pendingReply(d);
 });
 
 // ---------- Submit ----------
@@ -407,17 +408,35 @@ const submitBtn = document.getElementById('submitBtn');
 const formScreen = document.getElementById('formScreen');
 const statusScreen = document.getElementById('statusScreen');
 const hiddenFrame = document.getElementById('hiddenTargetFrame');
+const formError = document.getElementById('formError');
+let lastPayload = null;
 
 form.addEventListener('submit', function(e){
   e.preventDefault();
+  formError.style.display = 'none';
   document.getElementById('sigError').style.display = 'none';
+  document.getElementById('dateError').style.display = 'none';
 
-  if (!hasSignature){
-    document.getElementById('sigError').style.display = 'block';
+  if (!form.checkValidity()){
+    form.reportValidity();
     return;
   }
-  if (SCRIPT_URL.indexOf('PASTE_YOUR') === 0){
-    alert('Form is not yet connected to the backend. See setup instructions in Code.gs.');
+  if (reasonSelect.value === 'Other' && !document.getElementById('otherReasonText').value.trim()){
+    document.getElementById('otherReasonText').focus();
+    formError.textContent = 'Please describe the reason for absence.';
+    formError.style.display = 'block';
+    return;
+  }
+  const absFrom = document.getElementById('absenceFrom').value;
+  const absTo = document.getElementById('absenceTo').value;
+  if (absTo && absTo < absFrom){
+    document.getElementById('dateError').style.display = 'block';
+    document.getElementById('absenceTo').focus();
+    return;
+  }
+  if (!hasSignature){
+    document.getElementById('sigError').style.display = 'block';
+    canvas.scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
 
@@ -430,86 +449,139 @@ form.addEventListener('submit', function(e){
   });
 
   const reason = reasonSelect.value === 'Other'
-    ? (document.getElementById('otherReasonText').value.trim() || 'Other')
+    ? 'Other: ' + document.getElementById('otherReasonText').value.trim()
     : reasonSelect.value;
 
   const payload = {
     reportDate: document.getElementById('reportDate').value,
+    absenceFrom: absFrom,
+    absenceTo: absTo,
     parentName: document.getElementById('parentName').value.trim(),
     parentEmail: document.getElementById('parentEmail').value.trim(),
     parentPhone: document.getElementById('parentPhone').value.trim(),
     children: children,
     reason: reason,
-    signature: canvas.toDataURL('image/png'),
+    signature: signatureDataUrl(),
     submittedAt: new Date().toISOString()
   };
+  lastPayload = payload;
 
   submitBtn.disabled = true;
-  submitBtn.textContent = 'Submitting…';
+  submitBtn.textContent = 'Submitting… please wait';
 
-  // Build a hidden real <form> POST targeting a hidden iframe.
-  // This avoids CORS entirely (Apps Script Web Apps don't reliably
-  // send CORS headers back to fetch() from an external site).
+  // Hidden real <form> POST into a hidden iframe (avoids CORS problems
+  // with Apps Script). The server replies via postMessage.
   const tempForm = document.createElement('form');
   tempForm.method = 'POST';
   tempForm.action = SCRIPT_URL;
   tempForm.target = 'hiddenTargetFrame';
+  tempForm.acceptCharset = 'UTF-8';
   tempForm.style.display = 'none';
-
   const input = document.createElement('input');
   input.type = 'hidden';
   input.name = 'payload';
   input.value = JSON.stringify(payload);
   tempForm.appendChild(input);
-
   document.body.appendChild(tempForm);
 
-  let handled = false;
-  function finish(success){
+  let handled = false, loadTimer = null;
+  const hardTimer = setTimeout(() => finish({status:'timeout'}), 30000);
+
+  function finish(res){
     if (handled) return;
     handled = true;
+    clearTimeout(hardTimer); clearTimeout(loadTimer);
+    pendingReply = null;
+    hiddenFrame.onload = null;
     tempForm.remove();
     submitBtn.disabled = false;
     submitBtn.textContent = 'Submit Absence Report';
-    showStatus(success);
+    showStatus(res);
   }
 
-  hiddenFrame.onload = function(){ finish(true); };
-  // Fallback in case onload doesn't fire as expected
-  setTimeout(() => finish(true), 6000);
+  pendingReply = finish;
+  // If the page loaded but no message arrived, the server still received it.
+  hiddenFrame.onload = function(){
+    loadTimer = setTimeout(() => finish({status:'ok', ref:''}), 5000);
+  };
 
   tempForm.submit();
 });
 
-function showStatus(success){
+function showStatus(res){
+  const title = document.getElementById('statusTitle');
+  const msg = document.getElementById('statusMsg');
+  const icon = document.getElementById('statusIcon');
+  const refWrap = document.getElementById('refWrap');
+  const summary = document.getElementById('summary');
+  const backBtn = document.getElementById('backBtn');
+  const p = lastPayload || {};
+
   formScreen.classList.add('hidden');
   statusScreen.style.display = 'block';
-  if (success){
-    document.getElementById('statusIcon').textContent = '✅';
-    document.getElementById('statusTitle').textContent = 'Form Submitted';
-    document.getElementById('statusMsg').textContent =
-      'Thank you. Your absence report has been recorded and a confirmation email has been sent to you.';
+  summary.innerHTML = '';
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  if (res.status === 'ok'){
     statusScreen.classList.remove('error');
+    icon.textContent = '✓';
+    title.textContent = 'Form Successfully Submitted';
+    msg.textContent = 'Thank you, ' + (p.parentName || '') + '. The school has been notified of the absence.' +
+      (res.parentEmailSent === false
+        ? ' (We could not send the confirmation email — please keep this page or a screenshot for your records.)'
+        : ' A confirmation email has been sent to ' + (p.parentEmail || 'you') + '.');
+    if (res.ref){ refWrap.style.display = 'inline-block'; refWrap.textContent = 'Reference #: ' + res.ref; }
+    else { refWrap.style.display = 'none'; }
+
+    const lines = [];
+    (p.children || []).forEach(c => lines.push(['Student', c.name + ' — ' + c.grade]));
+    lines.push(['Date(s) absent', (!p.absenceTo || p.absenceTo === p.absenceFrom)
+      ? prettyDate(p.absenceFrom) : prettyDate(p.absenceFrom) + ' to ' + prettyDate(p.absenceTo)]);
+    lines.push(['Reason', p.reason]);
+    lines.forEach(([k, v]) => {
+      const d = document.createElement('div');
+      const b = document.createElement('b'); b.textContent = k + ': ';
+      d.appendChild(b); d.appendChild(document.createTextNode(v || ''));
+      summary.appendChild(d);
+    });
+    summary.style.display = 'block';
+    backBtn.style.display = 'none';
+    document.getElementById('submitAnotherBtn').style.display = '';
   } else {
-    document.getElementById('statusIcon').textContent = '⚠️';
-    document.getElementById('statusTitle').textContent = 'Submission Issue';
-    document.getElementById('statusMsg').textContent =
-      'Something went wrong sending your report. Please try again or contact the school office.';
     statusScreen.classList.add('error');
+    icon.textContent = '!';
+    refWrap.style.display = 'none';
+    summary.style.display = 'none';
+    backBtn.style.display = '';
+    document.getElementById('submitAnotherBtn').style.display = 'none';
+    if (res.status === 'timeout'){
+      title.textContent = 'We Couldn\u2019t Confirm Your Submission';
+      msg.textContent = 'The connection took too long. Please check your email for a confirmation. If none arrives within a few minutes, go back and try again, or contact the school office.';
+    } else {
+      title.textContent = 'Submission Not Completed';
+      msg.textContent = (res.message ? res.message + ' ' : '') + 'Please go back, check the form, and try again. If the problem continues, contact the school office.';
+    }
   }
 }
 
+// Back to form (keeps what the parent typed)
+document.getElementById('backBtn').addEventListener('click', function(){
+  statusScreen.style.display = 'none';
+  formScreen.classList.remove('hidden');
+});
+
+// Fresh form
 document.getElementById('submitAnotherBtn').addEventListener('click', function(){
   form.reset();
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  hasSignature = false;
+  clearSignature();
   childrenContainer.innerHTML = '';
   childCount = 0;
   addChildRow();
-  document.getElementById('reportDate').valueAsDate = new Date();
+  setDefaultDates();
   otherWrap.style.display = 'none';
   statusScreen.style.display = 'none';
   formScreen.classList.remove('hidden');
+  lastPayload = null;
 });
 </script>
 </body>
